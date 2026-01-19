@@ -144,12 +144,12 @@ function updateDashboard(data) {
 
 // Socket Events
 socket.on('connect', () => {
-    statusBadge.textContent = 'Connected to Backend';
+    statusBadge.textContent = 'Connected (Sockets)';
     statusBadge.className = 'connected';
 });
 
 socket.on('disconnect', () => {
-    statusBadge.textContent = 'Disconnected from Backend';
+    statusBadge.textContent = 'Reconnecting...';
     statusBadge.className = 'disconnected';
 });
 
@@ -157,10 +157,27 @@ socket.on('gridUpdate', (data) => {
     updateDashboard(data);
 });
 
-// Initial Fetch
-fetch('/api/state')
-    .then(res => res.json())
-    .then(data => {
+// Polling Fallback (For Vercel/Serverless)
+async function fetchState() {
+    try {
+        const res = await fetch('/api/state');
+        const data = await res.json();
         updateDashboard(data);
-    })
-    .catch(err => console.error('Error fetching initial state:', err));
+
+        // If socket is not connected, show polling status
+        if (!socket.connected) {
+            statusBadge.textContent = 'Live (Polling)';
+            statusBadge.className = 'connected';
+        }
+    } catch (err) {
+        console.error('Error fetching state:', err);
+        if (!socket.connected) {
+            statusBadge.textContent = 'Disconnected';
+            statusBadge.className = 'disconnected';
+        }
+    }
+}
+
+// Initial fetch and start polling
+fetchState();
+setInterval(fetchState, 2000); // Poll every 2 seconds
