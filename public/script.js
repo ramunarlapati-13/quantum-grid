@@ -84,6 +84,64 @@ const loadChart = new Chart(ctxLoad, {
     options: chartOptions
 });
 
+function updateDashboard(data) {
+    if (!data) return;
+    console.log('Updating dashboard with:', data);
+
+    // Update Values
+    if (data.frequency !== undefined) freqVal.textContent = data.frequency.toFixed(2);
+    if (data.voltage !== undefined) voltVal.textContent = data.voltage.toFixed(1);
+    if (data.totalLoad !== undefined) loadVal.textContent = data.totalLoad.toFixed(0);
+    if (data.totalGen !== undefined) genVal.textContent = `Generation: ${data.totalGen.toFixed(0)} MW`;
+
+    // Update Sim Time if available
+    if (data.simHour !== undefined) {
+        const h = Math.floor(data.simHour);
+        const m = Math.floor((data.simHour - h) * 60);
+        simTimeVal.textContent = `Day 1 | ${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+    }
+
+    // Update Bars
+    if (data.frequency !== undefined) {
+        // Freq 48-52 range mapped to 0-100%
+        const freqPercent = ((data.frequency - 48) / 4) * 100;
+        freqBar.style.width = `${Math.max(0, Math.min(100, freqPercent))}%`;
+
+        // Check for critical levels
+        if (data.frequency > 51 || data.frequency < 49) {
+            freqVal.style.color = '#ff3e3e';
+        } else {
+            freqVal.style.color = '#fff';
+        }
+    }
+
+    if (data.voltage !== undefined) {
+        // Voltage 220-240 range mapped to 0-100%
+        const voltPercent = ((data.voltage - 220) / 20) * 100;
+        voltBar.style.width = `${Math.max(0, Math.min(100, voltPercent))}%`;
+    }
+
+    // Update History
+    const now = new Date();
+    const ts = `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
+
+    timeLabels.push(ts);
+    freqHistory.push(data.frequency || 50);
+    loadHistory.push(data.totalLoad || 0);
+    genHistory.push(data.totalGen || 0);
+
+    // Keep only last 20 points
+    if (timeLabels.length > 20) {
+        timeLabels.shift();
+        freqHistory.shift();
+        loadHistory.shift();
+        genHistory.shift();
+    }
+
+    freqChart.update();
+    loadChart.update();
+}
+
 // Socket Events
 socket.on('connect', () => {
     statusBadge.textContent = 'Connected to Backend';
@@ -96,61 +154,13 @@ socket.on('disconnect', () => {
 });
 
 socket.on('gridUpdate', (data) => {
-    console.log('Update received:', data);
-
-    // Update Values
-    freqVal.textContent = data.frequency.toFixed(2);
-    voltVal.textContent = data.voltage.toFixed(1);
-    loadVal.textContent = data.totalLoad.toFixed(0);
-    genVal.textContent = `Generation: ${data.totalGen.toFixed(0)} MW`;
-
-    // Update Sim Time if available
-    if (data.simHour !== undefined) {
-        const h = Math.floor(data.simHour);
-        const m = Math.floor((data.simHour - h) * 60);
-        simTimeVal.textContent = `Day 1 | ${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
-    }
-
-    // Update Bars
-    // Freq 48-52 range mapped to 0-100%
-    const freqPercent = ((data.frequency - 48) / 4) * 100;
-    freqBar.style.width = `${freqPercent}%`;
-
-    // Voltage 220-240 range mapped to 0-100%
-    const voltPercent = ((data.voltage - 220) / 20) * 100;
-    voltBar.style.width = `${voltPercent}%`;
-
-    // Check for critical levels
-    if (data.frequency > 51 || data.frequency < 49) {
-        freqVal.style.color = '#ff3e3e';
-    } else {
-        freqVal.style.color = '#fff';
-    }
-
-    // Update History
-    const now = new Date();
-    const ts = `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
-
-    timeLabels.push(ts);
-    freqHistory.push(data.frequency);
-    loadHistory.push(data.totalLoad);
-    genHistory.push(data.totalGen);
-
-    // Keep only last 20 points
-    if (timeLabels.length > 20) {
-        timeLabels.shift();
-        freqHistory.shift();
-        loadHistory.shift();
-        genHistory.shift();
-    }
-
-    freqChart.update();
-    loadChart.update();
+    updateDashboard(data);
 });
 
 // Initial Fetch
 fetch('/api/state')
     .then(res => res.json())
     .then(data => {
-        // Handle initial state if needed
-    });
+        updateDashboard(data);
+    })
+    .catch(err => console.error('Error fetching initial state:', err));

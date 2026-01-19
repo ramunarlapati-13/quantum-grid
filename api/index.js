@@ -3,15 +3,12 @@ const http = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-
 const path = require('path');
 
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
-
-// Serve static files from the 'web' directory
-app.use(express.static(path.join(__dirname, '../web')));
+app.use(express.static(path.join(__dirname, '../public')));
 
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -40,8 +37,8 @@ app.post('/api/update', (req, res) => {
         timestamp: new Date().toISOString()
     };
 
-    // Broadcast to all web clients
-    io.emit('gridUpdate', gridState);
+    // Broadcast if io exists
+    if (io) io.emit('gridUpdate', gridState);
 
     res.status(200).json({ status: 'success' });
 });
@@ -51,7 +48,18 @@ app.get('/api/state', (req, res) => {
     res.json(gridState);
 });
 
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+// Basic route for API testing
+app.get('/api/hello', (req, res) => {
+    res.json({ message: "Quantum Grid API is active" });
 });
+
+// Export the app for Vercel
+module.exports = app;
+
+// Local execution logic
+if (require.main === module) {
+    const PORT = process.env.PORT || 3000;
+    server.listen(PORT, () => {
+        console.log(`Server running on http://localhost:${PORT}`);
+    });
+}
