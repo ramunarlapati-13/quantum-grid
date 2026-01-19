@@ -1,0 +1,351 @@
+:root {
+    --bg-dark: #0a0b10;
+    --card-bg: rgba(25, 27, 38, 0.7);
+    --accent: #00f2ff;
+    --accent-glow: rgba(0, 242, 255, 0.4);
+    --secondary: #7000ff;
+    --text-main: #ffffff;
+    --text-muted: #a0a6b5;
+    --success: #00ff88;
+    --danger: #ff3e3e;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    font-family: 'Outfit', sans-serif;
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+
+/* Glassmorphism Background */
+.background-blobs {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    filter: blur(80px);
+}
+
+.blob {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.15;
+}
+
+.blob-1 {
+    width: 500px;
+    height: 500px;
+    background: var(--accent);
+    top: -10%;
+    right: -10%;
+}
+
+.blob-2 {
+    width: 400px;
+    height: 400px;
+    background: var(--secondary);
+    bottom: -10%;
+    left: -10%;
+}
+
+.blob-3 {
+    width: 300px;
+    height: 300px;
+    background: #ff00ea;
+    top: 40%;
+    left: 30%;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem 5%;
+    background: rgba(10, 11, 16, 0.8);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logo h1 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.logo span {
+    font-weight: 300;
+    color: var(--accent);
+}
+
+.pulse-icon {
+    width: 12px;
+    height: 12px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 15px var(--accent);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.5);
+        opacity: 0.5;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.status {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.time-badge {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 6px 15px;
+    border-radius: 100px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--accent);
+}
+
+#connection-status.connected {
+    color: var(--success);
+}
+
+#connection-status.disconnected {
+    color: var(--danger);
+}
+
+main {
+    padding: 2rem 5%;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 2rem;
+}
+
+.card {
+    background: var(--card-bg);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    padding: 1.5rem;
+    backdrop-filter: blur(12px);
+    transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(0, 242, 255, 0.3);
+}
+
+.metric-card h3 {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 1rem;
+}
+
+.value-container {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 1rem;
+}
+
+.value-container span:first-child {
+    font-size: 2.5rem;
+    font-weight: 800;
+}
+
+.unit {
+    font-size: 1.2rem;
+    color: var(--text-muted);
+}
+
+.progress-bg {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--secondary));
+    box-shadow: 0 0 10px var(--accent-glow);
+    transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.progress-fill.accent {
+    background: linear-gradient(90deg, var(--secondary), #ff00ea);
+}
+
+.label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.charts-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    gap: 20px;
+    margin-bottom: 2rem;
+}
+
+.chart-card {
+    min-height: 400px;
+}
+
+.canvas-wrapper {
+    height: 300px;
+    margin-top: 1rem;
+}
+
+.viz-card {
+    margin-bottom: 2rem;
+}
+
+.map-placeholder {
+    height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    gap: 100px;
+}
+
+.node {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid var(--accent);
+    box-shadow: 0 0 20px var(--accent-glow);
+    font-weight: 800;
+    z-index: 1;
+}
+
+.node.source {
+    border-color: var(--success);
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
+}
+
+.node.load {
+    border-color: #ff00ea;
+    box-shadow: 0 0 20px rgba(255, 0, 234, 0.2);
+}
+
+.line {
+    position: absolute;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    z-index: 0;
+}
+
+.l1 {
+    width: 100px;
+    left: calc(50% - 130px);
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.l2 {
+    width: 100px;
+    left: calc(50% + 30px);
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.power-flow-anim {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--accent);
+    animation: flow 3s linear infinite;
+    top: 50%;
+    left: calc(50% - 150px);
+    margin-top: -5px;
+}
+
+@keyframes flow {
+    0% {
+        transform: translateX(0);
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 1;
+    }
+
+    90% {
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateX(300px);
+        opacity: 0;
+    }
+}
+
+footer {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+@media (max-width: 768px) {
+    .charts-container {
+        grid-template-columns: 1fr;
+    }
+
+    .map-placeholder {
+        gap: 40px;
+    }
+
+    .l1,
+    .l2 {
+        width: 40px;
+    }
+}

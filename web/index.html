@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum Grid | Real-time Simulation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <div class="background-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <nav>
+        <div class="logo">
+            <span class="pulse-icon"></span>
+            <h1>QUANTUM<span>GRID</span></h1>
+        </div>
+        <div class="status">
+            <span id="sim-time" class="time-badge">Day 1 | 00:00</span>
+            <span id="connection-status" class="disconnected">Disconnected from Simulation</span>
+        </div>
+    </nav>
+
+    <main>
+        <section class="metrics-grid">
+            <div class="card metric-card">
+                <h3>System Frequency</h3>
+                <div class="value-container">
+                    <span id="freq-value">50.00</span>
+                    <span class="unit">Hz</span>
+                </div>
+                <div class="progress-bg">
+                    <div id="freq-bar" class="progress-fill" style="width: 50%;"></div>
+                </div>
+                <p class="label">Nominal: 50.00 Hz</p>
+            </div>
+
+            <div class="card metric-card">
+                <h3>Grid Voltage</h3>
+                <div class="value-container">
+                    <span id="volt-value">230.0</span>
+                    <span class="unit">V</span>
+                </div>
+                <div class="progress-bg">
+                    <div id="volt-bar" class="progress-fill accent" style="width: 70%;"></div>
+                </div>
+                <p class="label">Nominal: 230 V</p>
+            </div>
+
+            <div class="card metric-card">
+                <h3>Total Load</h3>
+                <div class="value-container">
+                    <span id="load-value">0</span>
+                    <span class="unit">MW</span>
+                </div>
+                <p class="label secondary" id="gen-value">Generation: 1000 MW</p>
+            </div>
+        </section>
+
+        <section class="charts-container">
+            <div class="card chart-card">
+                <div class="card-header">
+                    <h3>Frequency Stability History</h3>
+                    <div class="time-range">Real-time</div>
+                </div>
+                <div class="canvas-wrapper">
+                    <canvas id="freqChart"></canvas>
+                </div>
+            </div>
+
+            <div class="card chart-card">
+                <div class="card-header">
+                    <h3>Load vs Generation</h3>
+                    <div class="time-range">Last 60s</div>
+                </div>
+                <div class="canvas-wrapper">
+                    <canvas id="loadChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section class="grid-viz">
+            <div class="card viz-card">
+                <h3>Live Network Topology</h3>
+                <div class="map-placeholder">
+                    <div class="node source" id="node-a"><span>G1</span></div>
+                    <div class="line l1"></div>
+                    <div class="node bus" id="bus-1"><span>B1</span></div>
+                    <div class="line l2"></div>
+                    <div class="node load" id="node-b"><span>L1</span></div>
+                    <div class="power-flow-anim"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>MATLAB Real-time Simulation Interface &copy; 2024</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
